@@ -1,0 +1,104 @@
+/* Reset basic browser styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* NAVBAR */
+.navbar {
+  background-color: #111;
+  padding: 20px 0 60px; /* extra bottom padding to make room for the logo overlap */
+  position: relative;
+  z-index: 2;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  margin: auto;
+  color: white;
+}
+
+/* Navigation links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* Logo in the center */
+.floating-logo {
+  position: absolute;
+  left: 50%;
+  bottom: -40px; /* pushes logo downward to overlap orange part */
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.floating-logo img {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  background: none;
+  transition: 0.3s ease;
+}
+
+.floating-logo img:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+
+
+
+/* HERO SECTION */
+.hero {
+  background-color: #e68b2e;
+  color: #fff8e1;
+  text-align: center;
+  padding: 150px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-family: "Brush Script MT", cursive;
+  font-size: 80px;
+}
+
+.subtitle {
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.small-text {
+  margin-top: 20px;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.delatto {
+  font-family: 'Delatto', cursive;
+  font-size: 80px;
+  color: #fff8e1;  /* soft cream color */
+  text-align: center;
+  margin-top: 100px;
+}
