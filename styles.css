@@ -14,7 +14,8 @@ body {
 /* NAVBAR */
 .navbar {
   background-color: #111;
-  padding: 20px 0 60px; /* extra bottom padding to make room for the logo overlap */
+  padding: 30px 0 20px;
+  /* extra bottom padding to make room for the logo overlap */
   position: relative;
   z-index: 2;
 }
@@ -46,27 +47,23 @@ nav {
 }
 
 /* Logo in the center */
-.floating-logo {
+.logo {
   position: absolute;
   left: 50%;
-  bottom: -40px; /* pushes logo downward to overlap orange part */
+  bottom: -40px;
+  /* pushes logo downward to overlap orange part */
   transform: translateX(-50%);
   z-index: 3;
 }
 
-.floating-logo img {
-  height: 80px;
+.logo img {
+  height: 90px;
   width: auto;
   object-fit: contain;
   background: none;
   transition: 0.3s ease;
+
 }
-
-.floating-logo img:hover {
-  transform: translateX(-50%) scale(1.05);
-}
-
-
 
 
 /* HERO SECTION */
@@ -77,6 +74,7 @@ nav {
   padding: 150px 20px;
   position: relative;
   z-index: 1;
+  height: 100vh;
 }
 
 .title {
@@ -85,11 +83,13 @@ nav {
 }
 
 .subtitle {
+  font-family: "Brush Script MT", cursive;
   font-size: 22px;
   letter-spacing: 2px;
 }
 
 .small-text {
+  font-family: "Brush Script MT", cursive;
   margin-top: 20px;
   font-size: 14px;
   letter-spacing: 1px;
@@ -98,7 +98,8 @@ nav {
 .delatto {
   font-family: 'Delatto', cursive;
   font-size: 80px;
-  color: #fff8e1;  /* soft cream color */
+  color: #fff8e1;
+  /* soft cream color */
   text-align: center;
   margin-top: 100px;
 }
