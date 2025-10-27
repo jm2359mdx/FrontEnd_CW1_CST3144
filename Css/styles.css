@@ -16,7 +16,8 @@ body {
   background-color: #111;
   padding: 30px 0 20px;
   /* extra bottom padding to make room for the logo overlap */
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 2;
 }
 
@@ -57,6 +58,7 @@ nav {
 }
 
 .logo img {
+  position: sticky;
   height: 90px;
   width: auto;
   object-fit: contain;
