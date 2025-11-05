@@ -73,7 +73,7 @@
         </label>
         <small v-if="!validPhone && checkout.phone.length">Phone must be digits only</small>
 
-        <button type="submit" :disabled="!canPlaceOrder">Place Order (front end only)</button>
+        <button type="submit" :disabled="!canPlaceOrder">Place Order </button>
       </form>
     </section>
   </div>
@@ -131,7 +131,7 @@ export default {
     removeFromCart(index) { this.cart.splice(index, 1); },
     placeOrder() {
       if (!this.canPlaceOrder) return;
-      alert('Order validated on front end only. No backend calls made.');
+      alert('Order have been placed successfully✅`');
       this.cart = [];
       this.checkout.name = '';
       this.checkout.phone = '';
