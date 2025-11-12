@@ -50,8 +50,9 @@
       <ul class="grid">
         <!-- Render each lesson; key helps Vue track items efficiently -->
         <li v-for="lesson in sortedLessons" :key="lesson._id" class="card">
-          <!-- Lesson image with placeholder fallback and accessible alt -->
-          <img :src="lesson.image || placeholder" :alt="lesson.subject" />
+          <!-- Lesson image resolved by helper; precise size via CSS -->
+          <img :src="lessonImage(lesson)" :alt="lesson.subject" />
+
           <!-- Lesson subject -->
           <h3 v-text="lesson.subject"></h3>
           <!-- Lesson location -->
@@ -132,21 +133,38 @@ export default {
     return {
       // Title shown in header
       title: 'After School Lessons',
-      // Fallback image used when lesson.image is missing
+      // Fallback image used when a mapped lesson image is missing
       placeholder: 'https://via.placeholder.com/320x180?text=Lesson',
+
+      // Map subjects -> local asset URLs (Vite-friendly)
+      // Make sure these filenames match what you have under src/assets/lessons
+      images: {
+        Math: new URL('./assets/lessons/math.png', import.meta.url).href,
+        English: new URL('./assets/lessons/english.png', import.meta.url).href,
+        Science: new URL('./assets/lessons/science.png', import.meta.url).href,
+        Art: new URL('./assets/lessons/art.png', import.meta.url).href,
+        Music: new URL('./assets/lessons/music.png', import.meta.url).href,
+        PE: new URL('./assets/lessons/pe.png', import.meta.url).href,
+        Coding: new URL('./assets/lessons/coding.png', import.meta.url).href,
+        Robotics: new URL('./assets/lessons/robotics.png', import.meta.url).href,
+        Drama: new URL('./assets/lessons/drama.png', import.meta.url).href,
+        History: new URL('./assets/lessons/history.png', import.meta.url).href
+      },
+
       // Static catalog of lessons for this demo (would be fetched in real app)
       lessons: [
-        {_id:'1', subject:'Math',    location:'London',    price:15, spaces:8},
-        {_id:'2', subject:'English', location:'Leeds',     price:12, spaces:3},
-        {_id:'3', subject:'Science', location:'Bristol',   price:18, spaces:0},
-        {_id:'4', subject:'Art',     location:'London',    price:10, spaces:6},
-        {_id:'5', subject:'Music',   location:'Oxford',    price:20, spaces:2},
-        {_id:'6', subject:'PE',      location:'Bath',      price:9,  spaces:9},
-        {_id:'7', subject:'Coding',  location:'London',    price:22, spaces:4},
-        {_id:'8', subject:'Robotics',location:'Cardiff',   price:25, spaces:1},
-        {_id:'9', subject:'Drama',   location:'Leeds',     price:11, spaces:7},
-        {_id:'10',subject:'History', location:'Manchester',price:14,spaces:5}
+        {_id:'1', subject:'Math',     location:'London',     price:15, spaces:8},
+        {_id:'2', subject:'English',  location:'Leeds',      price:12, spaces:3},
+        {_id:'3', subject:'Science',  location:'Bristol',    price:18, spaces:0},
+        {_id:'4', subject:'Art',      location:'London',     price:10, spaces:6},
+        {_id:'5', subject:'Music',    location:'Oxford',     price:20, spaces:2},
+        {_id:'6', subject:'PE',       location:'Bath',       price:9,  spaces:9},
+        {_id:'7', subject:'Coding',   location:'London',     price:22, spaces:4},
+        {_id:'8', subject:'Robotics', location:'Cardiff',    price:25, spaces:1},
+        {_id:'9', subject:'Drama',    location:'Leeds',      price:11, spaces:7},
+        {_id:'10',subject:'History',  location:'Manchester', price:14, spaces:5}
       ],
+
       // Simple array cart storing lesson references
       cart: [],
       // Current sort field key
@@ -199,6 +217,11 @@ export default {
     }
   },
   methods: {
+    // Resolve the correct image for a lesson with safe fallbacks
+    lessonImage(lesson) {
+      return (this.images && this.images[lesson.subject]) || lesson.image || this.placeholder;
+    },
+
     // Compute remaining spaces after accounting for items of this lesson in cart
     spacesLeft(lesson) {
       const inCart = this.cart.filter(l => l._id === lesson._id).length;
@@ -238,7 +261,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:1re
 .grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;padding:0}
 /* Individual lesson card styling */
 .card{border:1px solid #ddd;border-radius:8px;padding:.75rem}
-/* Uniform image presentation */
+/* Uniform image presentation (precise, non-distorting) */
 img{width:100%;height:140px;object-fit:cover;border-radius:6px;background:#f5f5f5}
 /* Make buttons clickable by default cursor */
 button{cursor:pointer}
