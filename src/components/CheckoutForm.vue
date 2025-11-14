@@ -4,15 +4,28 @@
     <form @submit.prevent="$emit('place')">
       <label>
         Name
-        <input :value="checkout.name" @input="onName" placeholder="Jane Doe" />
+        <input
+          :value="checkout.name"
+          @input="$emit('update:checkout', { ...checkout, name: $event.target.value })"
+          @blur="$emit('update:checkout', { ...checkout, name: (checkout.name || '').trim() })"
+          placeholder="Jane Doe"
+          aria-label="Full name"
+        />
       </label>
-      <small v-if="!validName && checkout.name.length">Name must be letters and spaces only</small>
+      <small v-if="!validName && (checkout.name || '').length">Name must be letters and spaces only</small>
 
       <label>
         Phone
-        <input :value="checkout.phone" @input="onPhone" placeholder="07123456789" />
+        <input
+          :value="checkout.phone"
+          @input="$emit('update:checkout', { ...checkout, phone: $event.target.value })"
+          @blur="$emit('update:checkout', { ...checkout, phone: (checkout.phone || '').trim() })"
+          placeholder="07123456789"
+          inputmode="numeric"
+          aria-label="Phone number"
+        />
       </label>
-      <small v-if="!validPhone && checkout.phone.length">Phone must be digits only</small>
+      <small v-if="!validPhone && (checkout.phone || '').length">Phone must be digits only</small>
 
       <button type="submit" :disabled="!canPlace">Place Order</button>
     </form>
@@ -28,15 +41,7 @@ export default {
     validPhone: { type: Boolean, required: true },
     canPlace: { type: Boolean, required: true }
   },
-  emits: ['update:checkout', 'place'],
-  methods: {
-    onName(e) {
-      this.$emit('update:checkout', { ...this.checkout, name: e.target.value.trim() });
-    },
-    onPhone(e) {
-      this.$emit('update:checkout', { ...this.checkout, phone: e.target.value.trim() });
-    }
-  }
+  emits: ['update:checkout', 'place']
 };
 </script>
 

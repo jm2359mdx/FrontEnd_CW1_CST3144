@@ -27,7 +27,13 @@
     </section>
 
     <section v-else>
-      <cart-list :cart="cart" :total="cartTotal" @remove="removeFromCart" />
+     <cart-list
+  :cart="cart"
+  :total="cartTotal"
+  :lessons="lessons"
+  @remove="removeFromCart"
+  @update-quantity="updateCartQuantity"
+/>
 
       <checkout-form
         :checkout="checkout"
@@ -88,8 +94,12 @@ export default {
     };
   },
   computed: {
-    cartCount() { return this.cart.length; },
-    cartTotal() { return this.cart.reduce((s,l)=>s + (l.price||0), 0); },
+    cartCount() {
+    return this.cart.reduce((total, item) => total + (item.qty || 0), 0);
+  },
+     cartTotal() {
+    return this.cart.reduce((s, item) => s + (item.price || 0) * (item.qty || 0), 0);
+  },
     validName() { return /^[A-Za-z ]+$/.test(this.checkout.name || ''); },
     validPhone() { return /^[0-9]+$/.test(this.checkout.phone || ''); },
     canPlaceOrder() { return this.cart.length > 0 && this.validName && this.validPhone; },
@@ -112,27 +122,83 @@ export default {
       });
     }
   },
-  methods: {
-    lessonImage(lesson) {
-      return (this.images && this.images[lesson.subject]) || lesson.image || this.placeholder;
-    },
-    spacesLeft(lesson) {
-      const inCart = this.cart.filter(l => l._id === lesson._id).length;
-      return (lesson.spaces || 0) - inCart;
-    },
-    canAddToCart(lesson) { return this.spacesLeft(lesson) > 0; },
-    addToCart(lesson) { if (this.canAddToCart(lesson)) this.cart.push(lesson); },
-    removeFromCart(index) { this.cart.splice(index, 1); },
-    placeOrder() {
-      if (!this.canPlaceOrder) return;
-      alert('Order have been placed successfully✅');
-      this.cart = [];
-      this.checkout.name = '';
-      this.checkout.phone = '';
-      this.showCheckout = false;
+methods: {
+  // Resolve the correct image for a lesson with safe fallbacks
+  lessonImage(lesson) {
+    return (this.images && this.images[lesson.subject]) || lesson.image || this.placeholder;
+  },
+
+  // Compute remaining spaces after accounting for items of this lesson in cart (using qty)
+  spacesLeft(lesson) {
+    const cartItem = this.cart.find(i => i._id === lesson._id);
+    const inCartQty = cartItem ? (cartItem.qty || 0) : 0;
+    return (lesson.spaces || 0) - inCartQty;
+  },
+
+  // Allow add when at least one space remains
+  canAddToCart(lesson) {
+    return this.spacesLeft(lesson) > 0;
+  },
+
+  // Add one to cart (increment qty if exists)
+  addToCart(lesson) {
+    if (!this.canAddToCart(lesson)) return;
+    const existing = this.cart.find(i => i._id === lesson._id);
+    if (existing) {
+      // ensure we don't exceed available spaces
+      const left = (lesson.spaces || 0) - (existing.qty || 0);
+      if (left <= 0) return;
+      existing.qty = (existing.qty || 0) + 1;
+    } else {
+      // push a new cart item with qty: 1
+      this.cart.push({
+        _id: lesson._id,
+        subject: lesson.subject,
+        price: lesson.price,
+        qty: 1
+      });
     }
+  },
+
+  // Remove entire cart item by index
+  removeFromCart(index) {
+    this.cart.splice(index, 1);
+  },
+
+  // Update quantity of a cart item (index) to newQty (number)
+  updateCartQuantity(index, newQty) {
+    // sanitize and clamp newQty to integer >= 0
+    let qty = Number(newQty) || 0;
+    if (qty < 0) qty = 0;
+
+    const cartItem = this.cart[index];
+    if (!cartItem) return;
+
+    // find the corresponding lesson to know the max available spaces
+    const lesson = this.lessons.find(l => l._id === cartItem._id);
+    const maxAvailable = lesson ? (lesson.spaces || 0) : Infinity;
+
+    // clamp to maxAvailable
+    if (qty > maxAvailable) qty = maxAvailable;
+
+    if (qty === 0) {
+      // remove item if qty set to zero
+      this.cart.splice(index, 1);
+    } else {
+      this.cart[index].qty = qty;
+    }
+  },
+
+  // Validate and then simulate placing an order
+  placeOrder() {
+    if (!this.canPlaceOrder) return;
+    alert('Order have been placed successfully✅');
+    this.cart = [];
+    this.checkout.name = '';
+    this.checkout.phone = '';
+    this.showCheckout = false;
   }
-};
+}}
 </script>
 
 <style scoped>
