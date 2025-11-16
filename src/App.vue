@@ -75,13 +75,13 @@ export default {
       },
       lessons: [
         {_id:'1', subject:'Math',     location:'London',     price:15, spaces:8},
-        {_id:'2', subject:'English',  location:'Leeds',      price:12, spaces:3},
-        {_id:'3', subject:'Science',  location:'Bristol',    price:18, spaces:0},
+        {_id:'2', subject:'English',  location:'Leeds',      price:12, spaces:5},
+        {_id:'3', subject:'Science',  location:'Bristol',    price:18, spaces:8},
         {_id:'4', subject:'Art',      location:'London',     price:10, spaces:6},
-        {_id:'5', subject:'Music',    location:'Oxford',     price:20, spaces:2},
+        {_id:'5', subject:'Music',    location:'Oxford',     price:20, spaces:7},
         {_id:'6', subject:'PE',       location:'Bath',       price:9,  spaces:9},
-        {_id:'7', subject:'Coding',   location:'London',     price:22, spaces:4},
-        {_id:'8', subject:'Robotics', location:'Cardiff',    price:25, spaces:1},
+        {_id:'7', subject:'Coding',   location:'London',     price:22, spaces:6},
+        {_id:'8', subject:'Robotics', location:'Cardiff',    price:25, spaces:5},
         {_id:'9', subject:'Drama',    location:'Leeds',      price:11, spaces:7},
         {_id:'10',subject:'History',  location:'Manchester', price:14, spaces:5}
       ],

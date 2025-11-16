@@ -1,9 +1,13 @@
 <template>
   <header>
     <h1>{{ title }}</h1>
-    <button @click="$emit('toggle-checkout')">
-      {{ showCheckout ? 'Back to Lessons' : 'Go to Checkout' }} ({{ cartCount }})
-    </button>
+    <button
+  @click="$emit('toggle-checkout')"
+  :disabled="cartCount === 0"
+   aria-disabled="cartCount === 0"
+>
+  {{ showCheckout ? 'Back to Lessons' : 'Go to Checkout' }} ({{ cartCount }})
+</button>
   </header>
 </template>
 
