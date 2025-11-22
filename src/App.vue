@@ -77,7 +77,7 @@ export default {
         History: new URL('./assets/lessons/history.png', import.meta.url).href
       },
 
-      // 🔥 NOW FETCHED FROM BACKEND
+      // lessons loaded from backend
       lessons: [],
 
       cart: [],
@@ -90,7 +90,18 @@ export default {
   },
 
   mounted() {
+    // initial load
     this.fetchLessons();
+
+    // prepare debounced search function
+    this._debouncedFetchSearch = this.debounce(this.fetchSearch, 300);
+  },
+
+  watch: {
+    // search-as-you-type: call debounced fetch on each change
+    search(newVal) {
+      if (this._debouncedFetchSearch) this._debouncedFetchSearch(newVal);
+    }
   },
 
   computed: {
@@ -141,16 +152,45 @@ export default {
   },
 
   methods: {
+    // debounce helper
+    debounce(fn, wait = 300) {
+      let t = null;
+      return function (...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+      }.bind(this);
+    },
+
+    // fetch all lessons
     async fetchLessons() {
       try {
         const res = await fetch("http://localhost:3000/lessons");
-        if (!res.ok) throw new Error("Failed to fetch lessons");
+        if (!res.ok) throw new Error('Failed to load lessons');
         const data = await res.json();
-
-        // convert MongoDB _id → string
         this.lessons = data.map(l => ({ ...l, _id: String(l._id) }));
       } catch (err) {
-        console.error("Lesson fetch error:", err);
+        console.error("fetchLessons error:", err);
+      }
+    },
+
+    // call backend search endpoint (server-side filtering)
+    async fetchSearch(q) {
+      try {
+        // if empty -> reload all
+        if (!q || !q.trim()) {
+          await this.fetchLessons();
+          return;
+        }
+
+        const url = new URL("http://localhost:3000/search");
+        url.searchParams.set('q', q);
+
+        const res = await fetch(url.toString());
+        if (!res.ok) throw new Error('Search failed');
+        const data = await res.json();
+        this.lessons = data.map(l => ({ ...l, _id: String(l._id) }));
+      } catch (err) {
+        console.error('Search fetch error:', err);
       }
     },
 
@@ -212,7 +252,7 @@ export default {
       }
     },
 
-    // 🔥 Updated to POST → PUT → Clear cart
+    // POST order then update lesson spaces via PUTs
     async placeOrder() {
       if (!this.canPlaceOrder) return;
 
