@@ -54,6 +54,9 @@ import LessonsGrid from './components/LessonsGrid.vue';
 import CartList from './components/CartList.vue';
 import CheckoutForm from './components/CheckoutForm.vue';
 
+// use VITE_API_URL at build time, fallback to localhost for local dev
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export default {
   name: 'App',
   components: { AppHeader, ControlsBar, LessonsGrid, CartList, CheckoutForm },
@@ -177,7 +180,7 @@ export default {
     // fetch all lessons from backend
     async fetchLessons() {
       try {
-        const res = await fetch("http://localhost:3000/lessons");
+        const res = await fetch(`${API_BASE}/lessons`);
         if (!res.ok) throw new Error('Failed to load lessons');
         const data = await res.json();
         this.lessons = data.map(l => ({ ...l, _id: String(l._id) }));
@@ -195,7 +198,7 @@ export default {
           return;
         }
 
-        const url = new URL("http://localhost:3000/search");
+        const url = new URL(`${API_BASE}/search`);
         url.searchParams.set('q', q);
 
         const res = await fetch(url.toString());
@@ -286,7 +289,7 @@ export default {
 
       try {
         // 1. POST ORDER
-        const orderRes = await fetch("http://localhost:3000/orders", {
+        const orderRes = await fetch(`${API_BASE}/orders`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(order)
@@ -301,7 +304,7 @@ export default {
 
             const newSpaces = Math.max(0, lesson.spaces - i.qty);
 
-            await fetch(`http://localhost:3000/lessons/${i.lessonId}`, {
+            await fetch(`${API_BASE}/lessons/${i.lessonId}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ spaces: newSpaces })
