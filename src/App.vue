@@ -55,7 +55,7 @@ import CartList from './components/CartList.vue';
 import CheckoutForm from './components/CheckoutForm.vue';
 
 // use VITE_API_URL at build time, fallback to localhost for local dev
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE = import.meta.env.VITE_API_URL || "https://backend-cw1-cst3144-1.onrender.com";
 
 export default {
   name: 'App',
