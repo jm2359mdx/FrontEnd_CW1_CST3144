@@ -6,8 +6,3 @@ import App from './App.vue';
 createApp(App).mount('#app');
 
 
-// old Vue 2 mount (not used in Vue 3 apps)
-// kept here only if coursework wants to see contrast
-new Vue({
-  render: h => h(App)
-}).$mount('#app');
