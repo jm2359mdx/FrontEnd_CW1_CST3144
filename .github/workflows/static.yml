@@ -2,9 +2,8 @@ name: Deploy Vite site to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
-# ensure the workflow has token write access
 permissions:
   contents: write
   pages: write
@@ -16,16 +15,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
       - name: Install deps
         run: npm ci
-     - name: Build
-  env:
-    VITE_API_URL: "https://backend-cw1-cst3144-1.onrender.com"
-  run: npm run build
+
+      - name: Build
+        env:
+          VITE_API_URL: "https://backend-cw1-cst3144-1.onrender.com"
+        run: npm run build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
