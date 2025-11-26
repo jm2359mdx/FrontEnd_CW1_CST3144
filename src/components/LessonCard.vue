@@ -1,10 +1,12 @@
 <template>
+  <!-- single lesson card with stock info + add button -->
   <li class="card">
     <img :src="image" :alt="lesson.subject" />
     <h3 v-text="lesson.subject"></h3>
     <p><span v-text="lesson.location"></span></p>
     <p>£{{ lesson.price.toFixed(2) }}</p>
 
+    <!-- stock messaging -->
     <p :class="{muted: spacesLeft===0}" v-if="spacesLeft > 5">
       In stock ({{ spacesLeft }})
     </p>
@@ -13,18 +15,23 @@
     </p>
     <p class="muted" v-else>Out of stock</p>
 
-    <button @click="$emit('add', lesson)" :disabled="spacesLeft === 0">Add to cart</button>
+    <button @click="$emit('add', lesson)" :disabled="spacesLeft === 0">
+      Add to cart
+    </button>
   </li>
 </template>
 
 <script>
 export default {
   name: 'LessonCard',
+
+  // lesson details + computed stock from parent
   props: {
     lesson: { type: Object, required: true },
     image: { type: String, required: true },
     spacesLeft: { type: Number, required: true }
   },
+
   emits: ['add']
 };
 </script>

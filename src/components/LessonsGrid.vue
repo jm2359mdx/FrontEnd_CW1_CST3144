@@ -1,4 +1,5 @@
 <template>
+  <!-- grid of lesson cards -->
   <ul class="grid">
     <lesson-card
       v-for="lesson in lessons"
@@ -17,12 +18,15 @@ import LessonCard from './LessonCard.vue';
 export default {
   name: 'LessonsGrid',
   components: { LessonCard },
+
+  // data + helpers passed from parent
   props: {
     lessons: { type: Array, required: true },
     images: { type: Object, required: true },
     placeholder: { type: String, required: true },
     spacesLeftFn: { type: Function, required: true }
   },
+
   emits: ['add-to-cart']
 };
 </script>

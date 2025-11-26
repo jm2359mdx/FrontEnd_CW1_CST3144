@@ -52,7 +52,7 @@ export default {
   props: {
     cart: { type: Array, required: true },
     total: { type: Number, required: true },
-    // pass the lessons so we know max available per item
+    // pass lessons to calculate availability for each cart item
     lessons: { type: Array, required: false, default: () => [] }
   },
   emits: ['remove', 'update-quantity'],
@@ -63,7 +63,7 @@ export default {
     };
   },
   watch: {
-    // keep localQty in sync whenever cart prop changes externally
+    // keep localQty synced with external cart changes
     cart: {
       handler(newCart) {
         this.localQty = newCart.map(item => String(item.qty || 0));
@@ -73,46 +73,51 @@ export default {
     }
   },
   methods: {
-    // find max available spaces for a cart item
+    // return maximum available spaces for this cart item
     maxFor(item) {
       const lesson = this.lessons.find(l => l._id === item._id);
       return lesson ? (lesson.spaces || 0) : Infinity;
     },
+
+    // increment quantity (clamped to max) and emit update
     increment(idx) {
       const item = this.cart[idx];
       const max = this.maxFor(item);
       const newQty = Math.min((item.qty || 0) + 1, max);
-      // update immediate for +/- buttons
       this.$emit('update-quantity', idx, newQty);
-      // reflect immediately in local input
       this.$setLocalQty(idx, String(newQty));
     },
+
+    // decrement quantity (down to 0) and emit update
     decrement(idx) {
       const item = this.cart[idx];
       const newQty = Math.max((item.qty || 0) - 1, 0);
       this.$emit('update-quantity', idx, newQty);
       this.$setLocalQty(idx, String(newQty));
     },
-    // sanitize input as user types but DO NOT emit changes yet
+
+    // sanitize input while typing (digits only)
     onInput(idx) {
-      // keep only digits in the visible input
       const raw = String(this.localQty[idx] || '');
       const cleaned = raw.replace(/\D/g, '');
-      // allow empty string while typing (patient UX)
       this.localQty.splice(idx, 1, cleaned);
     },
-    // user pressed Enter — commit change
+
+    // commit on Enter
     onEnter(idx) {
       this.commitQty(idx);
     },
-    // user blurred the input — commit if valid, otherwise revert
+
+    // commit on blur (or revert if invalid)
     onBlur(idx) {
       this.commitQty(idx);
     },
-    // perform commit logic: parse, clamp, and emit update-quantity (or remove if zero)
+
+    // parse, clamp and emit quantity changes (or remove if zero)
     commitQty(idx) {
       const raw = this.localQty[idx];
-      // if user left it empty, revert to the existing cart qty (do not remove)
+
+      // if empty while typing, revert to the current cart qty
       if (raw === '' || raw == null) {
         const current = this.cart[idx];
         this.localQty.splice(idx, 1, String(current ? (current.qty || 0) : 0));
@@ -129,20 +134,17 @@ export default {
       const max = this.maxFor(item);
       if (n > max) n = max;
 
-      // If user set 0 explicitly, we will remove the item (keep existing behavior)
       if (n === 0) {
-        // emit remove by updating to 0 (App can interpret) or use remove event
+        // communicate removal via update-quantity (App handles removal)
         this.$emit('update-quantity', idx, 0);
-        // localQty will be resynced by watcher when cart changes
       } else {
         this.$emit('update-quantity', idx, n);
-        // reflect in localQty
         this.localQty.splice(idx, 1, String(n));
       }
     },
-    // helper to set localQty safely (avoids Vue reactivity edge cases)
+
+    // safely set localQty value (handles array resizing)
     $setLocalQty(idx, val) {
-      // ensure the array is long enough
       while (this.localQty.length < this.cart.length) this.localQty.push('0');
       this.localQty.splice(idx, 1, String(val));
     }

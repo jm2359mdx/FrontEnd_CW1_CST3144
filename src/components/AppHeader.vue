@@ -1,19 +1,24 @@
 <template>
   <header>
+    <!-- title + checkout toggle -->
     <h1>{{ title }}</h1>
+
     <button
   @click="$emit('toggle-checkout')"
-  :disabled="cartCount === 0"
-   aria-disabled="cartCount === 0"
+  :disabled="!showCheckout && cartCount === 0"
+  :aria-disabled="!showCheckout && cartCount === 0"
 >
   {{ showCheckout ? 'Back to Lessons' : 'Go to Checkout' }} ({{ cartCount }})
 </button>
+
   </header>
 </template>
 
 <script>
 export default {
   name: 'AppHeader',
+
+  // incoming header data from parent
   props: {
     title: { type: String, required: true },
     cartCount: { type: Number, required: true },
@@ -23,6 +28,7 @@ export default {
 </script>
 
 <style scoped>
-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 0}
-button{cursor:pointer}
+/* simple layout for header */
+header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+button { cursor: pointer; }
 </style>

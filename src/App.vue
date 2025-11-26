@@ -60,10 +60,12 @@ export default {
 
   data() {
     return {
+      // app title shown in header
       title: 'After School Lessons',
+      // fallback image URL used when no lesson image available
       placeholder: 'https://via.placeholder.com/320x180?text=Lesson',
 
-      // images stay the same
+      // static images mapped by subject (local assets)
       images: {
         Math: new URL('./assets/lessons/math.png', import.meta.url).href,
         English: new URL('./assets/lessons/english.png', import.meta.url).href,
@@ -80,35 +82,41 @@ export default {
       // lessons loaded from backend
       lessons: [],
 
+      // shopping cart state
       cart: [],
+      // sorting & filtering state
       sortBy: 'subject',
       sortDir: 'asc',
       search: '',
+      // UI: toggle to show checkout or list
       showCheckout: false,
+      // checkout form model
       checkout: { name: '', phone: '' }
     };
   },
 
   mounted() {
-    // initial load
+    // initial load of lessons from backend
     this.fetchLessons();
 
-    // prepare debounced search function
+    // debounce search to avoid many rapid server calls
     this._debouncedFetchSearch = this.debounce(this.fetchSearch, 300);
   },
 
   watch: {
-    // search-as-you-type: call debounced fetch on each change
+    // trigger debounced server search as user types
     search(newVal) {
       if (this._debouncedFetchSearch) this._debouncedFetchSearch(newVal);
     }
   },
 
   computed: {
+    // total items in cart
     cartCount() {
       return this.cart.reduce((total, item) => total + (item.qty || 0), 0);
     },
 
+    // cart monetary total
     cartTotal() {
       return this.cart.reduce(
         (s, item) => s + (item.price || 0) * (item.qty || 0),
@@ -116,18 +124,22 @@ export default {
       );
     },
 
+    // basic client-side name validation (letters + spaces)
     validName() {
       return /^[A-Za-z ]+$/.test(this.checkout.name || '');
     },
 
+    // basic client-side phone validation (digits only)
     validPhone() {
       return /^[0-9]+$/.test(this.checkout.phone || '');
     },
 
+    // whether checkout button should be enabled
     canPlaceOrder() {
       return this.cart.length > 0 && this.validName && this.validPhone;
     },
 
+    // lightweight front-end filter (used when search is empty or as fallback)
     filteredLessons() {
       const q = (this.search || '').toLowerCase().trim();
       if (!q) return this.lessons;
@@ -138,6 +150,7 @@ export default {
       });
     },
 
+    // sort filtered lessons by selected key and direction
     sortedLessons() {
       const key = this.sortBy;
       const dir = this.sortDir === 'asc' ? 1 : -1;
@@ -161,7 +174,7 @@ export default {
       }.bind(this);
     },
 
-    // fetch all lessons
+    // fetch all lessons from backend
     async fetchLessons() {
       try {
         const res = await fetch("http://localhost:3000/lessons");
@@ -173,7 +186,7 @@ export default {
       }
     },
 
-    // call backend search endpoint (server-side filtering)
+    // server-side search (called via debounced watcher)
     async fetchSearch(q) {
       try {
         // if empty -> reload all
@@ -194,6 +207,7 @@ export default {
       }
     },
 
+    // choose image for lesson (prefers mapped asset, then lesson.image, then placeholder)
     lessonImage(lesson) {
       return (
         (this.images && this.images[lesson.subject]) ||
@@ -202,16 +216,19 @@ export default {
       );
     },
 
+    // compute how many spaces remain considering items already in cart
     spacesLeft(lesson) {
       const cartItem = this.cart.find(i => i._id === lesson._id);
       const inCartQty = cartItem ? cartItem.qty : 0;
       return (lesson.spaces || 0) - inCartQty;
     },
 
+    // whether add-to-cart button should be enabled
     canAddToCart(lesson) {
       return this.spacesLeft(lesson) > 0;
     },
 
+    // add a lesson to cart (increments qty if already present)
     addToCart(lesson) {
       if (!this.canAddToCart(lesson)) return;
       const existing = this.cart.find(i => i._id === lesson._id);
@@ -229,10 +246,12 @@ export default {
       }
     },
 
+    // remove item from cart by index
     removeFromCart(index) {
       this.cart.splice(index, 1);
     },
 
+    // update cart item quantity with validation against available spaces
     updateCartQuantity(index, newQty) {
       let qty = Number(newQty) || 0;
       if (qty < 0) qty = 0;
@@ -252,7 +271,7 @@ export default {
       }
     },
 
-    // POST order then update lesson spaces via PUTs
+    // place order: POST order then update lesson spaces with PUTs
     async placeOrder() {
       if (!this.canPlaceOrder) return;
 
