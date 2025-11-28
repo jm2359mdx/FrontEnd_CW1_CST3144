@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       // app title shown in header
-      title: 'After School Lessons',
+      title: 'LearnEase',
       // fallback image URL used when no lesson image available
       placeholder: 'https://via.placeholder.com/320x180?text=Lesson',
 
