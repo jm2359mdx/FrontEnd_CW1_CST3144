@@ -17,7 +17,7 @@
 
         <!-- Quantity controls -->
         <div style="display:flex;align-items:center;gap:.5rem">
-          <button @click="decrement(idx)" :disabled="item.qty <= 1">-</button>
+          <button @click="decrement(idx)" :disabled="item.qty <= 0">-</button>
 
           <!-- patient input: use localQty to avoid immediate removal while typing -->
           <input
