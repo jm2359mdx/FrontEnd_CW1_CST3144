@@ -1,6 +1,6 @@
 <template>
-  <!-- single lesson card with stock info + add button -->
-  <li class="card">
+  <!-- each lesson should have at least (5%): Subject (1%), Location (1%), Price (1%), Spaces-->
+  <li class="card"> 
     <img :src="image" :alt="lesson.subject" />
     <h3 v-text="lesson.subject"></h3>
     <p><span v-text="lesson.location"></span></p>
@@ -15,6 +15,10 @@
     </p>
     <p class="muted" v-else>Out of stock</p>
 
+    <!-- each lesson must have an “Add to Cart” button  -->
+     <!-- the button is always visible, and only enabled when space is larger than 0 -->
+      <!-- clicking the button once (related interactions implemented by using v-on)
+        will add one space to the shopping cart, reducing the remaining space by one -->
     <button @click="$emit('add', lesson)" :disabled="spacesLeft === 0">
       Add to cart
     </button>

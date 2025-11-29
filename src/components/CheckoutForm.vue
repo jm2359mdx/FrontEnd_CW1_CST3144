@@ -38,7 +38,8 @@
         Phone must be digits only
       </small>
 
-      <!-- submit disabled until all validations satisfied -->
+      <!-- he “checkout” button is always visible and only enabled (clickable) 
+       after valid “Name” and “Phone” are provided  -->
       <button type="submit" :disabled="!canPlace">Place Order</button>
     </form>
   </div>

@@ -15,11 +15,12 @@
           <div>£{{ item.price.toFixed(2) }} each</div>
         </div>
 
-        <!-- Quantity controls -->
+         <!-- in the shopping cart page, the user should be able to remove lessons from the shopping cart; 
+          the removed lesson is added back to the lesson list  -->
         <div style="display:flex;align-items:center;gap:.5rem">
           <button @click="decrement(idx)" :disabled="item.qty <= 0">-</button>
 
-          <!-- patient input: use localQty to avoid immediate removal while typing -->
+          
           <input
             type="text"
             v-model="localQty[idx]"
@@ -47,6 +48,8 @@
 </template>
 
 <script>
+// the shopping cart, in the cart page, should show all the lessons added (1%).
+
 export default {
   name: 'CartList',
   props: {

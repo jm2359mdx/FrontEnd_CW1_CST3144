@@ -1,5 +1,5 @@
 <template>
-  <!-- grid of lesson cards -->
+  <!-- v-for must be used for the display of the lesson list -->
   <ul class="grid">
     <lesson-card
       v-for="lesson in lessons"

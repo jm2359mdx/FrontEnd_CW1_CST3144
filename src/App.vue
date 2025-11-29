@@ -1,48 +1,24 @@
 <template>
   <div id="app">
-    <app-header
-      :title="title"
-      :cart-count="cartCount"
-      :show-checkout="showCheckout"
-      @toggle-checkout="showCheckout = !showCheckout"
-    />
+    <app-header :title="title" :cart-count="cartCount" :show-checkout="showCheckout"
+      @toggle-checkout="showCheckout = !showCheckout" />
 
     <section v-if="!showCheckout">
-      <controls-bar
-        :search="search"
-        :sort-by="sortBy"
-        :sort-dir="sortDir"
-        @update:search="search = $event"
-        @update:sortBy="sortBy = $event"
-        @update:sortDir="sortDir = $event"
-      />
+      <controls-bar :search="search" :sort-by="sortBy" :sort-dir="sortDir" @update:search="search = $event"
+        @update:sortBy="sortBy = $event" @update:sortDir="sortDir = $event" />
 
-      <lessons-grid
-        :lessons="sortedLessons"
-        :images="images"
-        :placeholder="placeholder"
-        :spaces-left-fn="spacesLeft"
-        @add-to-cart="addToCart"
-      />
+        
+      <lessons-grid :lessons="sortedLessons" :images="images" :placeholder="placeholder" :spaces-left-fn="spacesLeft"
+        @add-to-cart="addToCart" />
     </section>
 
+    <!-- the checkout is part of the shopping cart page -->
     <section v-else>
-      <cart-list
-        :cart="cart"
-        :total="cartTotal"
-        :lessons="lessons"
-        @remove="removeFromCart"
-        @update-quantity="updateCartQuantity"
-      />
+      <cart-list :cart="cart" :total="cartTotal" :lessons="lessons" @remove="removeFromCart"
+        @update-quantity="updateCartQuantity" />
 
-      <checkout-form
-        :checkout="checkout"
-        :valid-name="validName"
-        :valid-phone="validPhone"
-        :can-place="canPlaceOrder"
-        @update:checkout="checkout = $event"
-        @place="placeOrder"
-      />
+      <checkout-form :checkout="checkout" :valid-name="validName" :valid-phone="validPhone" :can-place="canPlaceOrder"
+        @update:checkout="checkout = $event" @place="placeOrder" />
     </section>
   </div>
 </template>
@@ -68,7 +44,7 @@ export default {
       // fallback image URL used when no lesson image available
       placeholder: 'https://via.placeholder.com/320x180?text=Lesson',
 
-      // static images mapped by subject (local assets)
+       //at least 10 lessons, and each lesson should have 5 spaces
       images: {
         Math: new URL('./assets/lessons/math.png', import.meta.url).href,
         English: new URL('./assets/lessons/english.png', import.meta.url).href,
@@ -127,7 +103,7 @@ export default {
       );
     },
 
-    // basic client-side name validation (letters + spaces)
+    // the “Name” must be letters only and the “Phone” must be numbers only; 
     validName() {
       return /^[A-Za-z ]+$/.test(this.checkout.name || '');
     },
@@ -177,7 +153,7 @@ export default {
       }.bind(this);
     },
 
-    // fetch all lessons from backend
+    // one fetch that retrieves all the lessons with GET
     async fetchLessons() {
       try {
         const res = await fetch(`${API_BASE}/lessons`);
@@ -288,7 +264,7 @@ export default {
       };
 
       try {
-        // 1. POST ORDER
+        //  one fetch that saves a new order with POST after it is submitted 
         const orderRes = await fetch(`${API_BASE}/orders`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -296,14 +272,14 @@ export default {
         });
         if (!orderRes.ok) throw new Error("Order POST failed");
 
-        // 2. UPDATE SPACES IN BACKEND
+        // UPDATE SPACES IN BACKEND
         await Promise.all(
           order.items.map(async i => {
             const lesson = this.lessons.find(l => l._id === i.lessonId);
             if (!lesson) return;
 
             const newSpaces = Math.max(0, lesson.spaces - i.qty);
-
+            //one fetch that updates the available lesson space with PUT after an order is submitted
             await fetch(`${API_BASE}/lessons/${i.lessonId}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -315,6 +291,7 @@ export default {
           })
         );
 
+        // clicking the “checkout” button should display a message confirming the order has been submitted
         alert("Order placed successfully! 🎉");
 
         // 3. RESET CART + CHECKOUT FIELDS
@@ -337,6 +314,7 @@ body {
   margin: 0;
   padding: 0 1rem 2rem;
 }
+
 img {
   width: 100%;
   height: 140px;
@@ -344,6 +322,7 @@ img {
   border-radius: 6px;
   background: #f5f5f5;
 }
+
 .muted {
   opacity: 0.6;
 }

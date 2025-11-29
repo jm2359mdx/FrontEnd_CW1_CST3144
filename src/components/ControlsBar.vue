@@ -1,6 +1,7 @@
 <template>
   <div class="controls">
-    <!-- search + sorting controls for lesson list -->
+    <!--  the user can choose to sort the lessons by one of the following attributes 
+      (8%): subject (2%), location (2%), price (2%), or spaces  -->
     <label>
       Search
       <input

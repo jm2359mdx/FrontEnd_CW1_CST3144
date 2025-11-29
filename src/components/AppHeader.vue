@@ -3,11 +3,13 @@
     <!-- title + checkout toggle -->
     <h1>{{ title }}</h1>
 
+    <!-- the shopping cart button should only be enabled after at least one lesson is added to cart  -->
     <button
-  @click="$emit('toggle-checkout')"
-  :disabled="!showCheckout && cartCount === 0"
-  :aria-disabled="!showCheckout && cartCount === 0"
->
+    @click="$emit('toggle-checkout')"
+    :disabled="!showCheckout && cartCount === 0"
+    :aria-disabled="!showCheckout && cartCount === 0"
+    >
+    <!-- clicking the shopping cart button should show the cart page, and clicking the button again goes back to the lesson page  -->
   {{ showCheckout ? 'Back to Lessons' : 'Go to Checkout' }} ({{ cartCount }})
 </button>
 
