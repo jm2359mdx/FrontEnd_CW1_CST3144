@@ -168,12 +168,11 @@ export default {
     // server-side search (called via debounced watcher)
     async fetchSearch(q) {
       try {
-        // if empty -> reload all
         if (!q || !q.trim()) {
           await this.fetchLessons();
           return;
         }
-
+// Fetch and Visual Aspects
         const url = new URL(`${API_BASE}/search`);
         url.searchParams.set('q', q);
 
